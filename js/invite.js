@@ -103,9 +103,12 @@
       body: JSON.stringify({ code: code })
     }).then(function (r) {
       if (r.ok) return openBase();
-      if (r.status === 404) return openVault(code);
-      throw new Error('no');
-    }).catch(function () { fail(); });
+      if (r.status === 403) throw new Error('denied');
+      return openVault(code);
+    }).catch(function (e) {
+      if (e && e.message === 'denied') { fail(); return; }
+      return openVault(code).catch(function () { fail(); });
+    });
   }
   if (selftest && HOST) { openBase(); return; }
   form.addEventListener('submit', submit);
