@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Bodega Metalpar · Módulos 3 y 4</title>
+<link rel="stylesheet" href="css/app.css">
+</head><body class="locked" data-view="bodega">
+<div id="invite">
+  <form id="inviteForm">
+    <b>Bodega Metalpar</b>
+    <p>Esta información es reservada. Entre solo con un código de invitación.</p>
+    <input id="inviteCode" type="password" autocomplete="off" placeholder="Código de invitación" spellcheck="false">
+    <button class="btn pri" id="inviteGo" type="submit">Entrar</button>
+    <p id="inviteErr" class="err"></p>
+  </form>
+</div>
+<div id="shell">
+<header id="top">
+  <nav id="nav">
+    <button type="button" data-page="bodega" class="on">Bodega</button>
+    <button type="button" data-page="pedidos">Pedidos</button>
+    <button type="button" data-page="mov">Entradas</button>
+  </nav>
+  <div class="brand"><b>Bodega Metalpar</b><span class="mut">Módulos 3 y 4</span></div>
+  <div class="brandmeta"><div class="dbname" id="dbName">Cargando…</div><div class="mut small" id="dbMeta"></div></div>
+  <div class="grow"></div>
+  <div class="row">
+    <button class="btn pri" id="btnLoad" title="Elegir otro archivo de Excel (Ctrl+O)">Cargar Excel…</button>
+    <button class="btn" id="btnSync">Sincronizar</button>
+    <button class="btn" id="btnEmb">Base incluida</button>
+  </div>
+</header>
+
+<div id="work">
+<main id="data">
+<div id="pageBodega" class="page">
+  <section class="sec">
+    <h3>Clasificación ABC <span class="mut" style="font-weight:400;letter-spacing:0;text-transform:none">· acumulación del Excel: A hasta el 80 % de la demanda, B hasta el 95 %, C el resto</span></h3>
+    <div id="capbar"></div>
+    <div id="abcRows"></div>
+    <div class="mut small" id="abcFoot"></div>
+    <div class="ctl">
+      <div class="lab">Qué clases entran a esta bodega</div>
+      <div class="scope">
+        <label class="chk"><input type="checkbox" data-scope="A"> <span>Clase A</span></label>
+        <label class="chk"><input type="checkbox" data-scope="B"> <span>Clase B</span></label>
+        <label class="chk"><input type="checkbox" data-scope="C"> <span>Clase C</span></label>
+      </div>
+    </div>
+    <div class="ctl">
+      <div class="lab">Ocupación según el archivo: <b id="occv">—</b></div>
+      <input type="range" id="occ" min="1" max="100" step="1" value="71">
+      <div class="mut small" id="occInfo"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-stock">
+    <h3>Disponible</h3>
+    <p class="mut" id="stockNote">El ingreso se registra en Entradas. La salida la hace el picking, en Pedidos.</p>
+    <div id="stockList"></div>
+  </section>
+
+  <section class="sec">
+    <h3>Productos <span class="badge" id="gridCount">0</span></h3>
+    <div class="row">
+      <input id="q" list="skulist" placeholder="Buscar SKU, nombre o ubicación (H-1, AMP1, H03-A05-2-N4)" autocomplete="off" spellcheck="false">
+      <button class="btn" id="qgo">Ubicar</button>
+    </div>
+    <datalist id="skulist"></datalist>
+    <div class="filters" id="filters">
+      <button data-f="" class="on">Todos</button>
+      <button data-f="A">Clase A</button>
+      <button data-f="B">Clase B</button>
+      <button data-f="C">Clase C</button>
+    </div>
+    <div id="grid"><div class="mut small">Cargando productos…</div></div>
+    <div id="selcard"></div>
+  </section>
+
+  <section class="sec" id="s-warn">
+    <h3>Calidad de los datos <span class="badge" id="warnN">0</span></h3>
+    <label class="chk host-only"><input type="checkbox" id="chkAuto"> <span>Sincronizar automáticamente cuando se guarde el Excel</span></label>
+    <div class="state" id="syncState"></div>
+    <div id="warns"></div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="exLoc">Exportar ubicaciones</button><button class="btn" id="exSku">Exportar productos</button></div>
+  </section>
+
+  <details class="sec"><summary>Cómo se ubica</summary>
+    <p><b>Clase.</b> Columna ABC del Excel, por acumulación: los de mayor demanda hasta el 80 % son A, hasta el 95 % son B y el resto es C.</p>
+    <p><b>Cuántas posiciones.</b> Los datos ocupan el 71 % de la bodega. Cada producto recibe al menos una posición y el resto se reparte según sus pallets por mes. Lo que sobra queda libre.</p>
+    <p><b>Dónde.</b> Primero la clase A, en las posiciones más cercanas a las cortinas y en los niveles bajos; después B y C. El layout 3D de la derecha muestra ese lugar.</p>
+    <p><b>Código.</b> H03-A05-2-N4 = hilera 3 desde el norte · tramo A (oeste) · bahía 5 · posición 2 · nivel 4.</p>
+  </details>
+</div>
+<div id="pagePedidos" class="page">
+  <section class="sec" id="s-orders">
+    <h3>Solicitudes de pedido <span class="badge" id="ordN">0</span></h3>
+    <p class="mut">La cantidad a sacar queda en la solicitud. En el celular, al escanear el código de la ubicación, aparece esa cantidad.</p>
+    <div class="row">
+      <input id="ordRef" placeholder="Nº de pedido (vacío = se numera solo)" autocomplete="off">
+      <input id="ordNote" placeholder="Cliente o nota" autocomplete="off">
+    </div>
+    <div class="row" style="margin-top:6px">
+      <input id="ordSku" list="skulist" placeholder="SKU o nombre" autocomplete="off">
+      <input id="ordQty" type="number" min="1" step="1" placeholder="Cantidad a sacar">
+      <button class="btn" id="ordAdd" type="button">Agregar</button>
+    </div>
+    <div id="ordDraft"></div>
+    <div class="row" style="margin-top:6px">
+      <button class="btn pri" id="ordCreate" type="button">Crear solicitud</button>
+    </div>
+    <div id="ordList"></div>
+    <div class="card" id="pickLink">
+      <h4>Celular de picking</h4>
+      <p class="mut small" id="pickHint">Preparando la dirección…</p>
+      <div id="pickUrl"></div>
+      <canvas id="pickQr" width="160" height="160"></canvas>
+      <p class="mut small">Instale la aplicación Picking Bodega en el celular (el archivo PickingBodega.apk). La primera vez escanee este código: es la dirección de esta bodega dentro de la aplicación, no una página del navegador. El celular y este computador van en la misma red Wi-Fi. Si no conecta, permita el puerto 8787 en el firewall de Windows.</p>
+    </div>
+  </section>
+</div>
+<div id="pageMov" class="page">
+  <section class="sec">
+    <h3>Entradas</h3>
+    <p class="mut">Aquí solo se registra lo que entra. La salida la descuenta el picking al sacar el pedido.</p>
+    <p id="movSku" class="mut">Elija un producto en Bodega, o búsquelo aquí.</p>
+    <div class="row">
+      <input id="movFind" list="skulist" placeholder="SKU o nombre" autocomplete="off">
+      <button class="btn" id="movGo" type="button">Abrir</button>
+    </div>
+    <div class="row movef" style="margin-top:8px">
+      <input id="moveQty" type="number" min="1" step="1" placeholder="Cantidad que entra">
+      <input id="moveDate" type="date">
+      <input id="moveDoc" placeholder="Documento">
+      <input id="moveNote" placeholder="Nota">
+      <button type="button" class="btn pri" id="moveAdd">Registrar entrada</button>
+    </div>
+    <div id="movHist"></div>
+  </section>
+</div>
+</main>
+
+<aside id="stage">
+  <div class="stagehead">
+    <button type="button" class="iconbtn" id="layoutToggle" title="Agrandar el layout" aria-label="Agrandar el layout">
+      <svg class="ic-big" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg>
+      <svg class="ic-small" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2v4H2M10 6h4V2M10 14v-4h4M6 10H2v4"/></svg>
+    </button>
+    <b>Dónde se ubica</b><span class="mut">Apoyo visual del layout</span>
+  </div>
+  <div class="stageview"><div id="c"></div><div id="aisle" hidden></div></div>
+  <div class="stagetools">
+    <button data-v="iso" class="on">Isométrica</button><button data-v="top">Planta</button><button data-v="front">Frente</button>
+    <button id="abcb" class="on">Colores ABC</button>
+    <details>
+      <summary>Capas</summary>
+      <div class="layers">
+        <button data-g="walls" class="on">Paredes</button><button data-g="roof">Techo</button><button data-g="cols" class="on">Columnas</button><button data-g="pal" class="on">Pallets</button><button data-g="doors" class="on">Cortinas</button><button data-g="eq" class="on">Apiladoras</button><button data-g="lines" class="on">Líneas amarillas</button><button data-g="ext" class="on">Extintores</button><button data-g="lab" class="on">Etiquetas</button>
+      </div>
+    </details>
+  </div>
+  <details id="medidas" class="stagefoot">
+    <summary>Medidas del layout</summary>
+    <div class="small">48,5 m × 40,9 m · 1.984 m² · altura 10,10 m · 16 hileras · 5 niveles.<br>
+    <span class="k" style="background:#4aa3df"></span>recepción <span class="k" style="background:#f2c14e"></span>preparación de pedidos <span class="k" style="background:#5fc97a"></span>despacho</div>
+    <div id="iDyn" class="mut small"></div>
+  </details>
+</aside>
+</div>
+</div>
+
+<input type="file" id="file" accept=".xlsx,.xlsm" hidden>
+<div id="tip"></div>
+<div id="toast"></div>
+<div id="busy"></div>
+<div id="drop">Suelte aquí el Excel (.xlsx) para sincronizar</div>
+
+<script src="js/invite.js"></script>
+</body></html>
